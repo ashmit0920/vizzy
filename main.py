@@ -3,6 +3,7 @@ import pandas as pd
 from rich.console import Console
 from rich.table import Table
 import sys
+import matplotlib.pyplot as plt
 
 console = Console()
 
@@ -54,6 +55,22 @@ def summary(data):
 
     console.print(stat_table)
 
+def display_boxplot(data, cols):
+    fig = plt.figure(figsize =(10, 7))
+
+    for col in cols:
+        if col not in data.columns:
+            console.print(f"[bold red]Error:[/bold red] Column '{col}' not found in the dataset.")
+            return
+
+    selected_data = data[cols]
+    
+    plt.figure(figsize=(10, 6))
+    selected_data.boxplot(column=cols)
+    plt.title("Boxplot of Selected Columns")
+    plt.xticks(rotation=45)
+    plt.show()
+
 def main():
     # Show the welcome screen
     welcome_screen()
@@ -84,6 +101,13 @@ def main():
         action="store_true",
         help="Display a summary of numeric columns (mean, median, min, max, std dev)"
     )
+
+    # Boxplot flag
+    parser.add_argument(
+        "-bp", "--boxplot",
+        type=str,
+        help="Display boxplots for specified columns (comma-separated list)."
+    )
     
     # Parse arguments
     args = parser.parse_args()
@@ -108,6 +132,10 @@ def main():
     
     if args.summary:
         summary(data)
+    
+    if args.boxplot:
+        cols = args.boxplot.split(",")
+        display_boxplot(data, cols)
 
 if __name__ == "__main__":
     main()
