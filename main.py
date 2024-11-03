@@ -71,6 +71,16 @@ def display_boxplot(data, cols):
     plt.xticks(rotation=45)
     plt.show()
 
+def display_histograms(data, columns):
+    for col in columns:
+        if col not in data.columns:
+            console.print(f"[bold red]Error:[/bold red] Column '{col}' not found in the dataset.")
+            return
+
+    data[columns].hist(bins=20, figsize=(10, 6))
+    plt.suptitle("Histograms of Selected Columns")
+    plt.show()
+
 def main():
     # Show the welcome screen
     welcome_screen()
@@ -108,6 +118,13 @@ def main():
         type=str,
         help="Display boxplots for specified columns (comma-separated list)."
     )
+
+    # Histogram flag
+    parser.add_argument(
+        "-hg", "--histogram",
+        type=str,
+        help="Display histograms for specified columns (comma-separated list)"
+    )
     
     # Parse arguments
     args = parser.parse_args()
@@ -127,8 +144,6 @@ def main():
     # Display data as a table if -t flag is set
     if args.table:
         display_table(data)
-    # else:
-    #     console.print("[bold yellow]Tip:[/bold yellow] Use -t flag to display data as a table.")
     
     if args.summary:
         summary(data)
@@ -136,6 +151,10 @@ def main():
     if args.boxplot:
         cols = args.boxplot.split(",")
         display_boxplot(data, cols)
-
+    
+    if args.histogram:
+        columns = args.histogram.split(",")
+        display_histograms(data, columns)
+        
 if __name__ == "__main__":
     main()
